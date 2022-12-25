@@ -1,15 +1,22 @@
 {
-  "name": "area-dhm",
-  "version": "1.0.0",
-  "description": "Simple chat",
-  "main": "index.js",
-  "scripts": {
-    "start": "node ./index.js"
-  },
-  "author": "darhm00",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.18.2",
-    "socket.io": "^4.5.4"
-  }
+    "engines": [
+        "node": "18.x"
+    ],
+    "name": "area-dhm",
+    "version": "1.0.0",
+    "description": "Simple chat",
+    "main": "index.js",
+    "scripts": {
+        "start": "node ./index.js"
+    },
+    "author": "darhm00",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.18.2",
+        "socket.io": "^4.5.4"
+    },
+    "repository": {
+        "type": "git",
+        "repository": "git+https://github.com/darhm00/area-dhm/"
+    }
 }
