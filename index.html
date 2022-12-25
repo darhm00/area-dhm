@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            --bg: #1d2021;
+            --bg1: #3c3836;
+            --bg2: #504945;
+            --bg3: #665c54;
+            --bg4: #7c6f64;
+            --fg: #fbf1c7;
+            --gray: #928374;
+            --red: #fb4934;
+            --green: #b8bb26;
+            --yellow: #fabd2f;
+            --blue: #83a498;
+            --purple: #d3869b;
+            --aqua: #8ec07c;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+        }
+
+        * {
+            font-family: monospace;
+        }
+
+        .message-box {
+            display: flex;
+            flex-direction: column;
+
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+
+            padding: 8px;
+
+            background: var(--bg1);
+        }
+
+        input[type=text] {
+            background-color: var(--bg2);
+            color: var(--fg);
+            border: none;
+            padding: 4px;
+        }
+
+        label {
+            padding: 3px 0px;
+            font-style: italic;
+        }
+
+        textarea {
+            resize: none;
+            background-color: var(--bg2);
+            color: var(--fg);
+            border: none;
+            padding: 4px;
+        }
+
+        input[type=text]:focus,
+        textarea:focus {
+            outline: none;
+        }
+
+        .message {
+            background: var(--bg2);
+            padding: 5px;
+            margin-bottom: 8px;
+        }
+
+        .name {
+            color: var(--green);
+        }
+    </style>
+</head>
+<body>
+    <div align="center">
+        <h1><b>Area DHM live chat</b></h1>
+        <small>Copyright (C) 2022-2023 DHM</small><br>
+        <small>== Ab anno MMXXII ==</small>
+    </div>
+
+    <hr>
+    <div id="messages" class="messages">
+        <!-- <div class="message">
+            <span class="name">Name</span><br>
+            <span class="content">Message</span>
+        </div> -->
+    </div>
+
+    <div class="message-box">
+        <label>Name:</label>
+        <input value="Anon" id="name-input" type="text" placeholder="Name">
+        <label>Message:</label>
+        <textarea id="msg-textarea" rows="4" placeholder="Message"></textarea>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const
+            textarea = document.getElementById("msg-textarea"),
+            input = document.getElementById("name-input"),
+            messages = document.getElementById("messages");
+            socket = io();
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+
+        textarea.addEventListener("keydown", (e) => {
+            if (e.code == "Enter" && textarea.value.trim() !== "") {
+                e.preventDefault();
+
+                console.log(textarea.value.trim());
+
+                let name = escapeHtml(input.value.trim());
+                let content = escapeHtml(textarea.value.trim());
+
+                socket.emit('chatMessage', {
+                    name: (name == "") ? "Anon" : name,
+                    content: content
+                });
+
+                textarea.value = null;
+                textarea.focus();
+            }
+        });
+
+        socket.on('chatMessage', (message) => {
+            console.log("received a message");
+
+            if (typeof message != "object" || Array.isArray(message)) return;
+
+            console.log("msg is ok!");
+
+            let name = message.name.trim();
+            let content = message.content.trim();
+            messages.innerHTML += `<div class="message"><span class="name">${name}</span><br><span class="content">${content}</span></div>`;
+
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+
+    </script>
+</body>
+</html>
